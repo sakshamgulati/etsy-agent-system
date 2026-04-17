@@ -1,0 +1,6 @@
+[run]
+omit =
+    auth_setup.py
+    main.py
+    db/test_db.py
+    tests/*
