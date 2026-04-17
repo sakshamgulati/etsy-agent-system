@@ -18,12 +18,16 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 _PROJECT_ROOT = Path(__file__).parent.parent
-DB_PATH = os.environ.get(
-    "ETSY_DB_PATH",
-    str(_PROJECT_ROOT / "db" / "etsy_agent.db"),
-)
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
+
+
+def _get_db_path() -> str:
+    """Read DB path at call time so load_dotenv() has already run."""
+    return os.environ.get(
+        "ETSY_DB_PATH",
+        str(Path(__file__).parent.parent / "db" / "etsy_agent.db"),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -41,18 +45,18 @@ def _utcnow() -> str:
 
 def init_db() -> None:
     """Create the DB file (if needed) and apply schema.sql (idempotent)."""
-    db_file = Path(DB_PATH)
+    db_file = Path(_get_db_path())
     db_file.parent.mkdir(parents=True, exist_ok=True)
 
     schema = _SCHEMA_PATH.read_text()
-    with sqlite3.connect(DB_PATH) as conn:
+    with sqlite3.connect(_get_db_path()) as conn:
         conn.executescript(schema)
         conn.commit()
 
 
 def get_conn() -> sqlite3.Connection:
     """Return a sqlite3.Connection with row_factory set to sqlite3.Row."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(_get_db_path())
     conn.row_factory = sqlite3.Row
     return conn
 

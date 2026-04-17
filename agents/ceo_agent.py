@@ -143,7 +143,7 @@ def _top_listing(stats) -> str:
     )
 
 
-VALID_AGENTS = {"analytics", "seo", "finance", "marketing", "ceo"}
+VALID_AGENTS = {"analytics", "seo", "finance", "marketing"}
 
 MAX_TG_LEN = 4096
 

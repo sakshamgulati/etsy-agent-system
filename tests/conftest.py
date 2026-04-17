@@ -53,10 +53,8 @@ def tmp_db(monkeypatch, tmp_path):
     db_file = tmp_path / "test_etsy_agent.db"
     monkeypatch.setenv("ETSY_DB_PATH", str(db_file))
 
-    # Patch the DB_PATH in the database module so it uses our temp DB
+    # DB_PATH is now lazy via _get_db_path(); setting ETSY_DB_PATH env var is sufficient
     import db.database as db_module
-    monkeypatch.setattr(db_module, "DB_PATH", str(db_file))
-
     db_module.init_db()
     yield str(db_file)
 
